@@ -69,7 +69,7 @@ exports.signin_post = async (req, res) => {
     }
 
     const secretKey = "helloworld123"
-    const token = await sign(userData, secretKey, {expiresIn: '1h'});
+    const token = await sign(userData, secretKey, {expiresIn: '1y'});
 
     res.status(201).json({token})
 }

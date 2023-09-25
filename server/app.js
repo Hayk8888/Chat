@@ -1,21 +1,17 @@
 const express = require('express');
 const authRouter = require('./router/auth');
 const cors = require('cors')
-const http = require('http'); // Import the 'http' module
-const socketIo = require('socket.io'); // Import 'socket.io' module
+const http = require('http');
+const socketIo = require('socket.io');
 const bodyParser = require('body-parser');
 
 
 require('dotenv').config();
 require('./db/database')();
 
-const {createServer} = require("http");
+
 const app = express();
 const port = 5000
-
-const whitelist = [
-    "http://localhost:5173/chat",
-];
 
 const server = http.createServer(app);
 
@@ -24,17 +20,15 @@ const io = socketIo(server, {
     cors: {
         origin: '*',
     },
+    maxHttpBufferSize: 1e8
 });
 
-io.on('connection', (socket) => {
-    socket.on('message', msg => {
-        io.emit('message', msg);
-    });
-});
+
+require('./controllers/mesageController')(io);
 
 
 const corsOptions = {
-    origin: 'http://localhost:5173', // Replace with your client's origin URL
+    origin: 'http://localhost:5173',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
 };

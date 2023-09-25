@@ -5,6 +5,25 @@ const secretKey = "helloworld123";
 module.exports = async function (req, res, next) {
     const headers = req.headers.authorization;
 
+    const authorizationHeader = req.headers.authorization;
+
+    if (!authorizationHeader) {
+        return res.status(400).json({ message: "No token provided" });
+    }
+
+// Check if the authorization header starts with "Bearer "
+    if (!authorizationHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ message: "Invalid token format" });
+    }
+
+
+    const bearertoken = authorizationHeader.substring(7);
+
+     if(!bearertoken) {
+         return res.status(401).json({message: "berer token is invalid"})
+     }
+
+
     if (!headers) {
         return res.status(400).json({message: "no token"})
     }
@@ -19,8 +38,6 @@ module.exports = async function (req, res, next) {
 
     try {
         decoded = jwt.verify(token, secretKey);
-        const  user =  {id: userId}
-        const token = jwt.sign(user, secretKey, { expiresIn: '60y' });
     } catch (e) {
         return res.status(400).json({message: "token not valid"})
     }

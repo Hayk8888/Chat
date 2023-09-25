@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import './chat/chat.css';
 import userImage1 from '../images/unnamed.jpg';
 import userImage2 from '../images/download.jpg';
@@ -6,15 +6,17 @@ import userImage3 from '../images/vardan.jpg';
 import './chat/ChatApp.css';
 import './chat/chat.css';
 import {socket} from "../../io/index.js";
+import axios from 'axios';
 
-function Chat() {
+const Chat = () => {
     const [activeUser, setActiveUser] = useState(0);
     const [userChats] = useState([
-        { username: 'Aram Asatryan', status: 'offline', photo: userImage1 },
-        { username: 'Gor Vardanyan', status: 'online', photo: userImage2 },
-        { username: 'Vardan Karagyozyan', status: 'online', photo: userImage3 },
-        // Add more users as needed
+        {username: 'Aram Asatryan', status: 'offline', photo: userImage1},
+        {username: 'Gor Vardanyan', status: 'online', photo: userImage2},
+        {username: 'Vardan Karagyozyan', status: 'online', photo: userImage3},
+
     ]);
+    const [selectedFile, setSelectedFile] = useState(null);
 
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
@@ -42,6 +44,22 @@ function Chat() {
         socket.emit('message', newMessage);
     };
 
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        setSelectedFile(file);
+    };
+    const handleSendFile = () => {
+        if (selectedFile) {
+            socket.emit("uploads", selectedFile);
+            console.log(selectedFile)
+            setSelectedFile(null);
+        } else {
+            console.log('please select  a file  before  sending');
+        }
+    }
+
+
+
     return (
         <div className="content-chat mt-20">
             <div className="content-chat-user">
@@ -50,7 +68,7 @@ function Chat() {
                 </div>
 
                 <div className="search-user mt-30">
-                    <input id="search-input" type="text" placeholder="Search..." name="search" className="search" />
+                    <input id="search-input" type="text" placeholder="Search..." name="search" className="search"/>
                     <span>
                         <i className="fa-solid fa-magnifying-glass"></i>
                     </span>
@@ -84,34 +102,34 @@ function Chat() {
             <div className="content-chat-message-user">
             </div>
             <div className="chat-app">
-            <div className="chat-container">
-                <div className="chat-messages">
-                    {messages.map((message, index) => (
-                        <div key={index} className="message">
-                            {message}
-                            {/*<span className="user">{message.user}:</span> {message.text}*/}
-                        </div>
-                    ))}
-                </div>
-                <div className="chat-input">
-                    <input
-                        type="text"
-                        placeholder="Type a message..."
-                        value={newMessage}
-                        onChange={handleInputChange}
-                    />
+                <div className="chat-container">
+                    <div className="chat-messages">
+                        {messages.map((message, index) => (
+                            <div key={index} className="message">
+                                {message}
+                                {/*<span className="user">{message.user}:</span> {message.text}*/}
+                            </div>
+                        ))}
+                    </div>
+                    <span>
 
-                    <button onClick={sendMessage} >send</button>
+                  <input type="file" onChange={handleFileChange} className=""/>
+                        <button  onClick={handleSendFile}>send file</button>
+                    </span>
+
+                    <div className="chat-input">
+                        <input
+                            type="text"
+                            placeholder="Type a message..."
+                            value={newMessage}
+                            onChange={handleInputChange}
+                        />
+                        <button onClick={sendMessage}>send</button>
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
 
     );
 }
-
 export default Chat;
-
-
-
-
