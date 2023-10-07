@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
+const MailService = require('../controllers/mailController')
 const authValidation = require("../middleware/authValidation");
 const checkAuth = require("../middleware/checkAuth");
 const Message =  require('../models/Messagemodel');
@@ -53,6 +54,12 @@ router.post('/chat', async (req, res) => {
          res.status(400).send(err);
     }
 
+})
+
+router.post('/sendmail', async (req, res) => {
+    const { to, message } = req.body;
+    await MailService.sendActivationMail(to, message);
+    res.json({message: "sdg"})
 })
 
 module.exports = router
